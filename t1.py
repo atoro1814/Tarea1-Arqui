@@ -24,7 +24,20 @@ def construccionTablero(largoPasillo,tablero,cantidadGuardias,ultimaPosicion):
 
         print("La posicion del guardia ", i+1, " es: ", pos_columna + 1,",", pos_fila+ 1)
 
+#Mover al jugador mas la actualizacion del tablero
+def moverjugador(tablero, movimiento, cantidad, ultima_posicion):
+    columna = ultima_posicion[1]
+    fila = ultima_posicion[0]
+    tablero[fila][columna] = "X" #actualiza la S a X 
+    contador = columna + cantidad
+    flag = True
     
+    #hacia donde es el movimiento? y cuantos espacios? una vez verificado el movimiento si es posible, ingresar al tablero con la posicion del jugador y cambiarla a X, luego moverla a la nueva posicion
+    
+    #si el movimiento es derecha o izquierda entonces se mueve [fijo][variable]
+    #si el movimiento es arriba o abajo entonces se mueve [variable][fijo]
+
+
 # Muestra el tablero por consola ya con los valores ingresados
 def mostrarTablero(tablero):
     for fila in tablero:
@@ -46,21 +59,50 @@ def movimiento(accion):
     else:
         return "error"
     
+def verificarMovimiento(tablero, accion, decimal):
+    print("La cantidad de pasos a la ",movimiento(accion),"que vas a dar es: ", decimal)
+
+    if decimal - ultimaPosicion[1] + 1 >  largoPasillo and accion == "D":
+            
+            raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
+    elif decimal - ultimaPosicion[1] + 1 < 0 and accion == "A":
+            
+            raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
+    elif decimal > 11 - ultimaPosicion[0] + 1 and accion == "S":
+            
+            raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
+    elif decimal > 11 -  ultimaPosicion[0] + 1 < 0 and accion == "W":
+            
+            raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
+    else:
+        return True
+    
+    
+    
+        
+
+    
 def convertirMovimiento(accion):
     try:
         if (largoPasillo < 20 ):
             print("Escribe la cantidad de pasos a ", movimiento(accion), " que quieres dar en formato binario: ")
             pasos = input()
-            convertirBinario(pasos)
+            decimal = convertirBinario(pasos)
+            
+            
             
         elif (largoPasillo > 20 and largoPasillo < 100):
             print("Escribe la cantidad de pasos a ", movimiento(accion), " que quieres dar en formato octal: ")
             pasos = input()
-            convertirOctal(pasos)
+            decimal = convertirOctal(pasos)
+            verificarMovimiento(tablero, accion, decimal)
         elif (largoPasillo > 100):
             print("Escribe la cantidad de pasos a ", movimiento(accion), " que quieres dar en formato hexadecimal: ")
             pasos = input()
             convertirHexadecimal(pasos)
+            decimal = convertirHexadecimal(pasos)
+            verificarMovimiento(tablero, accion, decimal)
+
     except ValueError as e:
         print(e)
         convertirMovimiento(accion)
@@ -79,7 +121,8 @@ def convertirBinario(numero):
         else:
             raise ValueError("Error, no es un numero binario")
             
-    print("El numero en decimal es: ", decimal)
+    
+    return decimal
 
 
 #octal usa numero del 0 al 7 
@@ -93,7 +136,7 @@ def convertirOctal(numero):
             contador += 1
         else:
             raise ValueError("Error, no es un numero octal")
-    print("El numero octal es: ", octal)
+    return octal
 
 
 #usa del 0 al 9, A B C D E F
@@ -108,7 +151,48 @@ def convertirHexadecimal(numero):
             contador += 1
         else: 
             raise ValueError("Error, no es un numero Hexadecimal")
+    return hexadecimal
+
+
+#convierte de decimal a octal
+def convertirDecimalOctal(numero):
+    numero = int(numero)
+    octal = ""
+    while numero > 0:
+        residuo = numero % 8
+        numero = numero // 8
+        octal += str(residuo)
+    octal = int(octal[::-1])
+    print("El numero octal es: ", octal)
+
+
+#convierte de decimal a binario
+def convertirDecimalBinario(numero):
+    num_binario = ""
+    while numero > 0:
+        if numero % 2 == 0:
+            num_binario += '0'
+        elif numero % 2 == 1:
+            num_binario += '1'
+        numero = numero // 2
+    num_binario = int(num_binario[::-1])
+    print("el numero binario es:", num_binario)
+
+
+#convierte de decimal a hexade
+def convertirDecimalHexadecimal(numero):
+    diccionarioHexadecimal = {"10":"A", "11": "B", "12":"C","13":"D","14":"E","15":"F"}
+    numero = int(numero)
+    hexadecimal = ""
+    while numero > 0:
+        residuo = numero % 16
+        numero = numero // 16
+        if residuo > 9 :
+            residuo = diccionarioHexadecimal[str(residuo)]
+        hexadecimal += str(residuo)
+    hexadecimal = hexadecimal[::-1]
     print("El numero hexadecimal es: ", hexadecimal)
+
 
 
 bandera = input("Bienvenido al juego METAL GEAR SOLID 1010: BINARY SNAKE, presione S para comenzar: ")
@@ -117,7 +201,17 @@ while bandera == "S":
     
     largoPasillo  = int(input("Ingrese el largo del pasillo: "))
     cantidadGuardias = int(input("Ingrese la cantidad de guardias: "))
-    tablero = [[],[],[],[],[],[],[],[],[],[],[]]
+    tablero = [[],
+               [],
+               [],
+               [],
+               [],
+               [], 
+               [],
+               [],
+               [],
+               [],
+               []]
     ultimaPosicion = [5,0]
 
     print("Generando tablero...")
@@ -132,11 +226,24 @@ while bandera == "S":
     print("Q: Salir")
     accion = input("Ingrese una direccion: ")
     
+    moverjugador(tablero, accion, 5, ultimaPosicion)
     if (accion == "Q"):
         print("Gracias por jugar!")
         break
 
+    
+
     convertirMovimiento(accion)
+
+
+   
+
+
+
+
+    
+
+
 
     
 
