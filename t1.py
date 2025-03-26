@@ -85,10 +85,10 @@ def moverjugador(tablero, movimiento, cantidad, ultima_posicion):
         
     tablero[fila][columna] = "S" #actualizamos
     print("La posicion actual del jugador es: ", columna + 1, ",", fila + 1)
-    ultimaPosicion[0] = fila #actualizamos
-    ultimaPosicion[1] = columna #actualizamos
-    print("La posicion actual del jugador es: !! ", ultimaPosicion[0] , ",", ultimaPosicion[1])
-    print(tablero[ultimaPosicion[0]][ultimaPosicion[1]])
+    ultima_posicion[0] = fila #actualizamos
+    ultima_posicion[1] = columna #actualizamos
+    print("La posicion actual del jugador es: !! ", ultima_posicion[0] , ",", ultima_posicion[1])
+    print(tablero[ultima_posicion[0]][ultima_posicion[1]])
     
     
 
@@ -311,6 +311,26 @@ def opciones_validas():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """  
 def actulizarposjugador(tablero,ultimaPosicion):
     for fila in range(len(tablero)):
@@ -324,12 +344,12 @@ def actulizarposjugador(tablero,ultimaPosicion):
     
 
 
-
+""""
 bandera = input("Bienvenido al juego METAL GEAR SOLID 1010: BINARY SNAKE, presione S para comenzar: ")
 ultimaPosicion = [5,0]
 
 #generar tablero inicial 
-#guardias y objetivo quedan en posiciones aleatorias y fijas!!
+#guardias y objetivo quedan en posiciones aleatorias y fijas!! ajustar!! 
 
 
 while bandera == "S":
@@ -375,11 +395,57 @@ while bandera == "S":
 
     
 
+"""
 
 
+#Primera Parte del Juego
 
-#hackeo(120)
-   
+#1. Preguntar si el usuario quiere jugar 
+bandera = input("Bienvenido al juego METAL GEAR SOLID 1010: BINARY SNAKE, presione S para comenzar: ")
+
+if bandera == "S" : 
+    ultima_posicion = [5,0]
+    largoPasillo  = int(input("Ingrese el largo del pasillo: "))
+    cantidadGuardias = int(input("Ingrese la cantidad de guardias: "))
+    tablero = [[],
+               [],
+               [],
+               [],
+               [],
+               [], 
+               [],
+               [],
+               [],
+               [],
+               []]
+
+    construccionTablero(largoPasillo,tablero, cantidadGuardias,ultima_posicion) #construimos tablero
+    
+    while bandera == "S" : 
+        #mostrar tablero
+        mostrarTablero(tablero)
+
+        #preguntar por la direccion
+        accion = opciones_validas()
+        if accion == "Q" : 
+            print("nos vemos para la proxima")
+            break
+
+
+        #preguntamos por la cantidad de movimiento 
+        cantidad = convertirMovimiento(accion,ultima_posicion)
+        #tenemos cantidad y accion
+        #mover jugador
+        opcion = moverjugador(tablero, accion,cantidad , ultima_posicion)
+
+        if opcion == 0 :
+            print("Has sido atrapado por un guardia")
+            break
+        elif opcion == 1:
+            print("Has llegado a la fase de hackeo")
+            hackeo(largoPasillo)
+            break
+
 
 
 
