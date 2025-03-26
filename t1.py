@@ -163,7 +163,7 @@ def convertirDecimalOctal(numero):
         numero = numero // 8
         octal += str(residuo)
     octal = int(octal[::-1])
-    print("El numero octal es: ", octal)
+    return octal
 
 
 #convierte de decimal a binario
@@ -176,7 +176,7 @@ def convertirDecimalBinario(numero):
             num_binario += '1'
         numero = numero // 2
     num_binario = int(num_binario[::-1])
-    print("el numero binario es:", num_binario)
+    return num_binario
 
 
 #convierte de decimal a hexade
@@ -191,7 +191,53 @@ def convertirDecimalHexadecimal(numero):
             residuo = diccionarioHexadecimal[str(residuo)]
         hexadecimal += str(residuo)
     hexadecimal = hexadecimal[::-1]
-    print("El numero hexadecimal es: ", hexadecimal)
+    return hexadecimal
+
+
+def numeroAleatorioHackeo (largoPasillo):
+    
+
+    if largoPasillo < 20:
+        numero = random.randint(0, 20)
+        
+        numero = convertirDecimalBinario(numero)
+    elif largoPasillo > 20 and largoPasillo < 100:
+        numero = random.randint(0, 100)
+        
+        numero = convertirDecimalOctal(numero)
+    elif largoPasillo > 100:
+        numero = random.randint(0, 500)
+        
+        numero = convertirDecimalHexadecimal(numero)
+
+
+    return numero
+
+def hackeo(largoPasillo):
+    print("Has ingresado a la ultima etapa del juego")
+    numeroAleatorio = numeroAleatorioHackeo(largoPasillo)
+    print("El numero que debes adivinar es: ", numeroAleatorio)
+
+    respuesta = int(input("Ingresa el numero que crees que es: "))
+
+
+    if largoPasillo < 20:
+        if convertirDecimalBinario(respuesta) == numeroAleatorio:
+            print("Has ganado")
+        else:
+            print("Has perdido")
+    elif largoPasillo > 20 and largoPasillo < 100:
+        if convertirDecimalOctal(respuesta) == numeroAleatorio:
+            print("Has ganado")
+        else:
+            print("Has perdido")
+    elif largoPasillo > 100:
+        if convertirDecimalHexadecimal(respuesta) == numeroAleatorio:
+            print("Has ganado")
+        else:    
+            print("Has perdido")    
+
+    
 
 
 
@@ -236,6 +282,9 @@ while bandera == "S":
     convertirMovimiento(accion)
 
 
+
+
+#hackeo(120)
    
 
 
