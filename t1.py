@@ -1,17 +1,42 @@
 import random
 
-
+flag = True
 # Construye el tablero segun el largo del pasillo que se ingrese
 def construccionTablero(largoPasillo,tablero,cantidadGuardias,ultimaPosicion):
     for fila in tablero : 
         for columna in range(largoPasillo):
             fila.append("X");
     
-    tablero[5][0] = "S"
+    tablero[ultimaPosicion[0]][ultimaPosicion[1]] = "S"
+    global flag
+
+    if flag:
     
+        pos_columna_objetivo = random.randint(1, largoPasillo-1)
+        tablero[10][pos_columna_objetivo] = "*"
+
+
+        
+        for i in range(cantidadGuardias):
+            pos_fila = random.randint(0, 10)
+            pos_columna = random.randint(0, largoPasillo-1)
+            while tablero[pos_fila][pos_columna] == "S" or tablero[pos_fila][pos_columna] == "*":
+                print ("Posicion Ocupada, vamos a generar una nueva posicion")
+                pos_fila = random.randint(1, 11)
+                pos_columna = random.randint(1, largoPasillo-1)
+
+            tablero[pos_fila][pos_columna] = "!";
+
+            print("La posicion del guardia ", i+1, " es: ", pos_columna + 1,",", pos_fila+ 1)
+        flag = False
+    
+
+def generarPosicionObjetivo(tablero, largoPasillo):
     pos_columna_objetivo = random.randint(1, largoPasillo-1)
     tablero[10][pos_columna_objetivo] = "*"
 
+
+def generarPosicionGuardias(tablero, cantidadGuardias):
     for i in range(cantidadGuardias):
         pos_fila = random.randint(0, 10)
         pos_columna = random.randint(0, largoPasillo-1)
@@ -24,19 +49,48 @@ def construccionTablero(largoPasillo,tablero,cantidadGuardias,ultimaPosicion):
 
         print("La posicion del guardia ", i+1, " es: ", pos_columna + 1,",", pos_fila+ 1)
 
+
+
 #Mover al jugador mas la actualizacion del tablero
 def moverjugador(tablero, movimiento, cantidad, ultima_posicion):
     columna = ultima_posicion[1]
     fila = ultima_posicion[0]
     tablero[fila][columna] = "X" #actualiza la S a X 
-    contador = columna + cantidad
-    flag = True
-    
-    #hacia donde es el movimiento? y cuantos espacios? una vez verificado el movimiento si es posible, ingresar al tablero con la posicion del jugador y cambiarla a X, luego moverla a la nueva posicion
-    
-    #si el movimiento es derecha o izquierda entonces se mueve [fijo][variable]
-    #si el movimiento es arriba o abajo entonces se mueve [variable][fijo]
 
+    fila_valor = 0
+    columna_valor = 0
+
+    #hacia donde se movera
+    if movimiento == "W":
+        fila_valor = -1
+    elif movimiento == "S":
+        fila_valor = 1
+    elif movimiento == "A":
+        columna_valor = -1
+    elif movimiento == "D":
+        columna_valor = 1
+
+    for _ in range(cantidad): #itera la cantidad de pasos que se ingreso
+        fila += fila_valor
+        columna += columna_valor
+
+        if tablero[fila][columna] == "!":
+            print("Has sido capturado por un guardia")
+            print("La posicion actual del jugador es: ", columna + 1, ",", fila + 1)
+            return 0
+        elif tablero[fila][columna] == "*":
+            print("Has llegado al objetivo, Iniciando hackeo")
+            print("La posicion actual del jugador es: ", columna + 1, ",", fila + 1)
+            return 1
+        
+    tablero[fila][columna] = "S" #actualizamos
+    print("La posicion actual del jugador es: ", columna + 1, ",", fila + 1)
+    ultimaPosicion[0] = fila #actualizamos
+    ultimaPosicion[1] = columna #actualizamos
+    print("La posicion actual del jugador es: !! ", ultimaPosicion[0] , ",", ultimaPosicion[1])
+    print(tablero[ultimaPosicion[0]][ultimaPosicion[1]])
+    
+    
 
 # Muestra el tablero por consola ya con los valores ingresados
 def mostrarTablero(tablero):
@@ -59,7 +113,7 @@ def movimiento(accion):
     else:
         return "error"
     
-def verificarMovimiento(tablero, accion, decimal):
+def verificarMovimiento(ultimaPosicion, accion, decimal):
     print("La cantidad de pasos a la ",movimiento(accion),"que vas a dar es: ", decimal)
 
     if decimal - ultimaPosicion[1] + 1 >  largoPasillo and accion == "D":
@@ -79,15 +133,13 @@ def verificarMovimiento(tablero, accion, decimal):
     
     
     
-        
-
-    
-def convertirMovimiento(accion):
+def convertirMovimiento(accion,ultimaPosicion):
     try:
         if (largoPasillo < 20 ):
             print("Escribe la cantidad de pasos a ", movimiento(accion), " que quieres dar en formato binario: ")
             pasos = input()
             decimal = convertirBinario(pasos)
+            verificarMovimiento(ultimaPosicion, accion, decimal)
             
             
             
@@ -95,14 +147,15 @@ def convertirMovimiento(accion):
             print("Escribe la cantidad de pasos a ", movimiento(accion), " que quieres dar en formato octal: ")
             pasos = input()
             decimal = convertirOctal(pasos)
-            verificarMovimiento(tablero, accion, decimal)
+            verificarMovimiento(ultimaPosicion, accion, decimal)
+            
         elif (largoPasillo > 100):
             print("Escribe la cantidad de pasos a ", movimiento(accion), " que quieres dar en formato hexadecimal: ")
             pasos = input()
             convertirHexadecimal(pasos)
             decimal = convertirHexadecimal(pasos)
-            verificarMovimiento(tablero, accion, decimal)
-
+            verificarMovimiento(ultimaPosicion, accion, decimal)
+        return decimal
     except ValueError as e:
         print(e)
         convertirMovimiento(accion)
@@ -237,13 +290,51 @@ def hackeo(largoPasillo):
         else:    
             print("Has perdido")    
 
+#valida las opciones que se ingresan
+def opciones_validas():
+    opciones = ["W", "A", "S", "D", "Q"]
+    while True:
+        print("A jugar!")
+        print("W: Arriba")
+        print("A: Izquierda")
+        print("S: Abajo")
+        print("D: Derecha")
+        print("Q: Salir")
+        accion = input("Ingrese una direccion: ").strip()
+
+        if accion in opciones:
+            return accion
+        else: 
+            print("OPCION INVALIDA, INTENTE NUEVAMENTE!") 
+            print("<---------------- ----------------->")
+            
+
+
+
+"""  
+def actulizarposjugador(tablero,ultimaPosicion):
+    for fila in range(len(tablero)):
+        for columna in range(len(tablero[fila])):
+            if tablero[fila][columna] == "S":
+                ultimaPosicion[0] = fila
+                ultimaPosicion[1] = columna
+    print("La posicion actual del jugador es: !! ", ultimaPosicion[0] , ",", ultimaPosicion[1])
+    return ultimaPosicion
+"""  
     
 
 
 
 bandera = input("Bienvenido al juego METAL GEAR SOLID 1010: BINARY SNAKE, presione S para comenzar: ")
+ultimaPosicion = [5,0]
+
+#generar tablero inicial 
+#guardias y objetivo quedan en posiciones aleatorias y fijas!!
+
 
 while bandera == "S":
+    
+        
     
     largoPasillo  = int(input("Ingrese el largo del pasillo: "))
     cantidadGuardias = int(input("Ingrese la cantidad de guardias: "))
@@ -258,28 +349,31 @@ while bandera == "S":
                [],
                [],
                []]
-    ultimaPosicion = [5,0]
+    #ultimaPosicion = [5,0]
+    
 
     print("Generando tablero...")
     construccionTablero(largoPasillo,tablero, cantidadGuardias,ultimaPosicion)
-    
     mostrarTablero(tablero)
-    print("A jugar!")
-    print("W: Arriba")
-    print("A: Izquierda")
-    print("S: Abajo")
-    print("D: Derecha")
-    print("Q: Salir")
-    accion = input("Ingrese una direccion: ")
+
     
-    moverjugador(tablero, accion, 5, ultimaPosicion)
+    accion = opciones_validas()
     if (accion == "Q"):
         print("Gracias por jugar!")
         break
 
+    cantidad=convertirMovimiento(accion,ultimaPosicion)
+    opcion = moverjugador(tablero, accion,cantidad , ultimaPosicion)
+    if opcion == 1:
+        hackeo(largoPasillo)
+    elif opcion == 0:
+        print("Has perdido")
+        break
+    
+    mostrarTablero(tablero)
     
 
-    convertirMovimiento(accion)
+    
 
 
 
