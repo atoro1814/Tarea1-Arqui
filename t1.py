@@ -98,16 +98,20 @@ def movimiento(accion):
 def verificarMovimiento(ultimaPosicion, accion, decimal):
     if accion == "W" or accion == "S":
         print("La cantidad de pasos hacia ",movimiento(accion),"que vas a dar es: ", decimal)
+        print("Posicicion Final es : ", ultima_posicion[0] + decimal + 1 ,"," ,ultimaPosicion[1])
     elif accion == "A" or accion == "D":
         print("La cantidad de pasos hacia la ",movimiento(accion),"que vas a dar es: ", decimal)
+        print("Posicicion Final es : ", ultima_posicion[0] + 1 ,"," ,ultimaPosicion[1] + decimal)
 
-    if decimal - ultimaPosicion[1] + 1 >  largoPasillo and accion == "D":
+    
+
+    if decimal + ultimaPosicion[1]  >=  largoPasillo and accion == "D":
             raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
-    elif decimal - ultimaPosicion[1] + 1 < 0 and accion == "A":
+    elif ultima_posicion[1] - decimal < 0 and accion == "A":
             raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
-    elif decimal > 11 - ultimaPosicion[0] + 1 and accion == "S":
+    elif ultima_posicion[0] + decimal > 11 and accion == "S":
             raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
-    elif decimal > 11 -  ultimaPosicion[0] + 1 < 0 and accion == "W":
+    elif ultima_posicion[0] - decimal < 0 and accion == "W":
             raise ValueError("Error, la cantidad de pasos es mayor al largo del pasillo")
     
     
